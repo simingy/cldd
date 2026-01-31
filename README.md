@@ -15,6 +15,7 @@ A standalone UI extension for [Chainlit](https://github.com/Chainlit/chainlit) t
 -   **Responsive**: Percentage-based sizing (`vw`/`vh`) that is fully configurable.
 -   **Zero Python Dependencies**: Works purely via CSS injection and JavaScript.
 -   **Namespace Safe**: All classes and IDs are prefixed with `cldd-` to avoid collisions.
+-   **Browser Support**: Modern browsers only (Chrome, Firefox, Safari, Edge). **Internet Explorer is not supported**.
 
 ## Installation
 
