@@ -1,6 +1,6 @@
 /**
  * Chainlit Docked Docs (CLDD)
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Siming Yuan
  * License: MIT
  */
@@ -12,7 +12,7 @@ window.addEventListener('load', function () {
     // You can customize the dock position, specific documentation URL, dimensions, and label here.
     const CONFIG = {
         // Dock Position
-        // Options: 'bottom', 'left', 'top', 'right'
+        // Options: 'bottom', 'bottom-left', 'bottom-right', 'top', 'left', 'right'
         // Default: 'bottom'
         dockPosition: 'bottom',
 

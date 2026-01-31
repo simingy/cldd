@@ -1,6 +1,6 @@
 /**
  * Chainlit Docked Docs (CLDD)
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Siming Yuan
  * License: MIT
  */
@@ -80,7 +80,7 @@
    - Left/Right: Header always Right (row-reverse)
 */
 
-/* BOTTOM */
+/* BOTTOM (Center) */
 #cldd-drawer[data-dock="bottom"] {
     bottom: 0;
     left: 0;
@@ -94,7 +94,35 @@
     border-top-right-radius: 16px;
 }
 
-/* TOP */
+/* BOTTOM LEFT */
+#cldd-drawer[data-dock="bottom-left"] {
+    bottom: 0;
+    left: 80px;
+    right: auto;
+    margin: 0;
+    width: 160px;
+    height: 32px;
+    flex-direction: column;
+    border-bottom: none;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+/* BOTTOM RIGHT */
+#cldd-drawer[data-dock="bottom-right"] {
+    bottom: 0;
+    right: 80px;
+    left: auto;
+    margin: 0;
+    width: 160px;
+    height: 32px;
+    flex-direction: column;
+    border-bottom: none;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+/* TOP (Center) */
 #cldd-drawer[data-dock="top"] {
     top: 0;
     left: 0;
@@ -138,7 +166,9 @@
 
 
 /* --- EXPANDED (HOVER) STATES --- */
-#cldd-drawer[data-dock="bottom"]:hover {
+#cldd-drawer[data-dock="bottom"]:hover,
+#cldd-drawer[data-dock="bottom-left"]:hover,
+#cldd-drawer[data-dock="bottom-right"]:hover {
     width: var(--cldd-expand-width);
     height: var(--cldd-expand-height);
     background-color: var(--cldd-active-bg);
@@ -233,6 +263,8 @@
 
 /* Header Dimensions */
 #cldd-drawer[data-dock="bottom"] #cldd-header,
+#cldd-drawer[data-dock="bottom-left"] #cldd-header,
+#cldd-drawer[data-dock="bottom-right"] #cldd-header,
 #cldd-drawer[data-dock="top"] #cldd-header,
 #cldd-drawer.maximized #cldd-header {
     width: 100%;
@@ -260,6 +292,8 @@
 
 /* Horizontal Docks: Ensure minimum width for the label */
 #cldd-drawer[data-dock="bottom"] #cldd-label,
+#cldd-drawer[data-dock="bottom-left"] #cldd-label,
+#cldd-drawer[data-dock="bottom-right"] #cldd-label,
 #cldd-drawer[data-dock="top"] #cldd-label,
 #cldd-drawer.maximized #cldd-label {
     min-width: 80px;
@@ -290,6 +324,8 @@
 
 /* Horizontal Layout */
 #cldd-drawer[data-dock="bottom"] #cldd-controls,
+#cldd-drawer[data-dock="bottom-left"] #cldd-controls,
+#cldd-drawer[data-dock="bottom-right"] #cldd-controls,
 #cldd-drawer[data-dock="top"] #cldd-controls,
 #cldd-drawer.maximized #cldd-controls {
     right: 8px;
