@@ -1,0 +1,16 @@
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# Build / Dist
+dist/
+build/
+node_modules/
+
+# Python (if users accidentally init here)
+__pycache__/
+*.pyc
+.venv/
+.env

@@ -1,0 +1,371 @@
+/**
+ * Chainlit Docked Docs (CLDD)
+ * Version: 1.0.0
+ * Author: Siming Yuan
+ * License: MIT
+ */
+
+/* ChainLit Docked Docs (CLDD) - Custom Styling */
+:root {
+    /* --cldd-hover-height removed (controlled by JS now) */
+    --cldd-max-height: 95vh;
+    --cldd-close-delay: 0.25s;
+    --cldd-bg: #f5f5f5;
+    --cldd-bg-dark: #0f172a;
+    --cldd-active-bg: var(--cldd-bg);
+    --cldd-tab-color: #18181b;
+    /* Neutral Dark Gray */
+    --cldd-border-color: rgba(0, 0, 0, 0.1);
+    --cldd-border-color-dark: rgba(255, 255, 255, 0.1);
+}
+
+.dark {
+    --cldd-active-bg: var(--cldd-bg-dark);
+    /* Override for Dark */
+}
+
+/* Modal Backdrop */
+#cldd-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 9998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#cldd-backdrop.visible,
+#cldd-drawer:hover~#cldd-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- DRAWER --- */
+#cldd-drawer {
+    position: fixed;
+    z-index: 9999;
+
+    /* Hardware Acceleration Hints */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: height, width, border-radius, transform;
+
+    /* Base Appearance */
+    background-color: var(--cldd-tab-color);
+    border: 1px solid var(--cldd-border-color);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
+    overflow: hidden;
+    display: flex;
+    font-family: 'Inter', sans-serif;
+
+    /* Transitions */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition-delay: var(--cldd-close-delay);
+}
+
+/* Dark mode adjustment */
+.dark #cldd-drawer {
+    border-color: var(--cldd-border-color-dark);
+}
+
+/* --- DOCKING POSITIONS --- */
+/* Logic:
+   - Top/Bottom: Header always Top (column)
+   - Left/Right: Header always Right (row-reverse)
+*/
+
+/* BOTTOM */
+#cldd-drawer[data-dock="bottom"] {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 160px;
+    height: 32px;
+    flex-direction: column;
+    border-bottom: none;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+/* TOP */
+#cldd-drawer[data-dock="top"] {
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 160px;
+    height: 32px;
+    flex-direction: column;
+    border-top: none;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+/* LEFT */
+#cldd-drawer[data-dock="left"] {
+    left: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    width: 32px;
+    height: 160px;
+    flex-direction: row-reverse;
+    border-left: none;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+/* RIGHT */
+#cldd-drawer[data-dock="right"] {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    width: 32px;
+    height: 160px;
+    flex-direction: row-reverse;
+    border-right: none;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+
+/* --- EXPANDED (HOVER) STATES --- */
+#cldd-drawer[data-dock="bottom"]:hover {
+    width: var(--cldd-expand-width);
+    height: var(--cldd-expand-height);
+    background-color: var(--cldd-active-bg);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    transition-delay: 0s;
+}
+
+#cldd-drawer[data-dock="top"]:hover {
+    width: var(--cldd-expand-width);
+    height: var(--cldd-expand-height);
+    background-color: var(--cldd-active-bg);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14);
+    transition-delay: 0s;
+}
+
+#cldd-drawer[data-dock="left"]:hover {
+    width: var(--cldd-expand-width);
+    height: 80vh;
+    /* Keep height somewhat fixed or use another variable? User likely means width for Left dock. Let's stick to expand-width for main dimension? No, Left dock expands Width. Bottom uses Height. */
+    /* Let's map expand-width to the "main" change and keep others sensible defaults, or use both config vars intelligently.
+       For Left/Right: Width becomes expand-width. Height? Maybe 80vh fixed or expand-height? 
+       Let's use expand-height to be consistent with Top/Bottom. */
+    height: var(--cldd-expand-height);
+    background-color: var(--cldd-active-bg);
+    border-radius: 0 8px 8px 0;
+    box-shadow: 8px 0 10px 1px rgba(0, 0, 0, 0.14);
+    transition-delay: 0s;
+}
+
+#cldd-drawer[data-dock="right"]:hover {
+    width: var(--cldd-expand-width);
+    height: var(--cldd-expand-height);
+    background-color: var(--cldd-active-bg);
+    border-radius: 8px 0 0 8px;
+    box-shadow: -8px 0 10px 1px rgba(0, 0, 0, 0.14);
+    transition-delay: 0s;
+}
+
+/* --- MAXIMIZED STATES --- */
+#cldd-drawer.maximized {
+    width: 98vw !important;
+    height: 98vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    border-radius: 8px !important;
+    transition-delay: 0s;
+    flex-direction: column !important;
+}
+
+
+/* --- CONTENT --- */
+#cldd-frame {
+    flex-grow: 1;
+    border: none;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 0.2s;
+    transition-delay: var(--cldd-close-delay);
+    pointer-events: none;
+}
+
+#cldd-drawer:hover #cldd-frame,
+#cldd-drawer.maximized #cldd-frame {
+    background: transparent;
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0.1s;
+}
+
+
+/* --- HEADER --- */
+#cldd-header {
+    background-color: var(--cldd-tab-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    user-select: none;
+    position: relative;
+}
+
+/* Header Dimensions */
+#cldd-drawer[data-dock="bottom"] #cldd-header,
+#cldd-drawer[data-dock="top"] #cldd-header,
+#cldd-drawer.maximized #cldd-header {
+    width: 100%;
+    height: 32px;
+}
+
+#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-header,
+#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-header {
+    width: 32px;
+    height: 100%;
+}
+
+/* Label Positioning */
+#cldd-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+
+    /* Global alignment */
+    text-align: center;
+    padding: 0 4px;
+}
+
+/* Horizontal Docks: Ensure minimum width for the label */
+#cldd-drawer[data-dock="bottom"] #cldd-label,
+#cldd-drawer[data-dock="top"] #cldd-label,
+#cldd-drawer.maximized #cldd-label {
+    min-width: 80px;
+}
+
+/* Vertical Text Rotation */
+#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-label,
+#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+
+    /* Vertical Docks: Ensure minimum height for the label */
+    min-height: 80px;
+}
+
+/* --- BUTTONS --- */
+#cldd-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+/* Horizontal Layout */
+#cldd-drawer[data-dock="bottom"] #cldd-controls,
+#cldd-drawer[data-dock="top"] #cldd-controls,
+#cldd-drawer.maximized #cldd-controls {
+    right: 8px;
+    left: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: row;
+    writing-mode: horizontal-tb;
+}
+
+/* Vertical Layout */
+#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-controls,
+#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-controls {
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: column;
+}
+
+/* Reorder Buttons */
+#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-btn-maximize,
+#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-btn-maximize {
+    order: -1;
+}
+
+#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-btn-close,
+#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-btn-close {
+    order: -2;
+}
+
+/* Maximized Control Logic */
+#cldd-drawer.maximized #cldd-btn-maximize {
+    display: none;
+}
+
+#cldd-btn-close {
+    display: none;
+}
+
+#cldd-drawer.maximized #cldd-btn-close {
+    display: flex;
+    order: 0;
+}
+
+
+#cldd-drawer:hover #cldd-controls,
+#cldd-drawer.maximized #cldd-controls {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.cldd-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.cldd-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+#cldd-btn-maximize::after {
+    content: '⤢';
+    font-size: 14px;
+}
+
+#cldd-btn-close::after {
+    content: '✕';
+    font-size: 11px;
+}
