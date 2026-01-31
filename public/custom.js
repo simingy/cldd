@@ -1,6 +1,6 @@
 /**
  * Chainlit Docked Docs (CLDD)
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Siming Yuan
  * License: MIT
  */

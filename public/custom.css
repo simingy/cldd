@@ -1,6 +1,6 @@
 /**
  * Chainlit Docked Docs (CLDD)
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Siming Yuan
  * License: MIT
  */
@@ -32,6 +32,7 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
     z-index: 9998;
     opacity: 0;
@@ -52,6 +53,7 @@
 
     /* Hardware Acceleration Hints */
     transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     will-change: height, width, border-radius, transform;
 
@@ -257,6 +259,7 @@
     padding: 0 8px;
     cursor: pointer;
     flex-shrink: 0;
+    -webkit-user-select: none;
     user-select: none;
     position: relative;
 }

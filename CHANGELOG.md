@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-01-31
+
+### Added
+-   Development docs and Makefile workflow.
+-   Tested support for Chainlit 2.9.6.
+-   CSS vendor prefixes for better Safari/Chrome support.
+
 ## [1.1.0] - 2026-01-31
 
 ### Added
