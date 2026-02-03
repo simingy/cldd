@@ -1,14 +1,11 @@
 #!/bin/bash
 # Chainlit Docked Docs (CLDD) Installer
-# Version: 1.3.1
+# Version: 1.3.2
 set -e
 
 # Constants
 REPO_URL="https://raw.githubusercontent.com/simingy/cldd/main/public"
-# Allow overriding PUBLIC_DIR for testing
-PUBLIC_DIR="${PUBLIC_DIR:-public}"
-CSS_FILE="$PUBLIC_DIR/custom.css"
-JS_FILE="$PUBLIC_DIR/custom.js"
+DEFAULT_PUBLIC_DIR="public"
 
 # Markers
 CSS_START="/* CLDD-START */"
@@ -16,111 +13,117 @@ CSS_END="/* CLDD-END */"
 JS_START="// CLDD-START"
 JS_END="// CLDD-END"
 
-echo "🚀 Installing Chainlit Docked Docs (CLDD)..."
+# State
+TEMP_FILES=()
 
-# Ensure public dir exists
-mkdir -p "$PUBLIC_DIR"
+# --- Functions ---
 
-# Download Function
-download_content() {
-    local url=$1
+cleanup() {
+    for tmp in "${TEMP_FILES[@]}"; do
+        rm -f "$tmp"
+    done
+}
+trap cleanup EXIT INT TERM
+
+fetch_content() {
+    local filename=$1
     if [ "$LOCAL_INSTALL" == "true" ]; then
-        # For dev testing: use the files in current directory (where script is run from), NOT public/
-        # Assumes user runs ./install.sh --local from root of repo
-        # We need to distinguish Source from Target.
-        # But wait, the repo structure HAS them in public/custom.css.
-        # If we run in repo, target overwrites source!
-        # SOLUTION: Read into memory variable FIRST before touching file.
-        # In fact, we already do `JS_CONTENT=$(download_content...)`. 
-        # But `download_content` did `cat "public/..."`.
-        # If target IS `public/custom.css`, we are fine as long as we read fully before writing.
-        # However, `update_file` reads `public/custom.css` (Target) and appends `JS_CONTENT` (Source).
-        # If Source == Target, we are doubling the file content...
-        
-        # Correct logic for LOCAL DEV:
-        # We assume the user wants to install FROM current dir TO current dir (updating markers).
-        # This is valid for testing "update" logic.
-        # But if we want to simulate "installing elsewhere", we should probably copy to a temp location first?
-        # Let's just assume for --local, we read the disk file as source.
-        cat "$url" # url here will be passed as just filename ideally or relative path
+        # In local dev mode, we read from the current directory (source repo)
+        # We assume the script is run from the repo root
+        if [ ! -f "public/$filename" ]; then
+             echo "❌ Error: Source file 'public/$filename' not found in local repo." >&2
+             exit 1
+        fi
+        cat "public/$filename"
     else
-        curl -fsSL "$url"
+        # Remote mode
+        local content
+        # Capture stderr to suppress curl progress
+        if ! content=$(curl -fsSL "$REPO_URL/$filename"); then
+             echo "❌ Error: Failed to download $filename from $REPO_URL/$filename" >&2
+             exit 1
+        fi
+        echo "$content"
     fi
 }
 
-# Update Function
-update_file() {
-    local file=$1
+install_asset() {
+    local filename=$1
     local content=$2
     local start_marker=$3
     local end_marker=$4
+    local target_path="$PUBLIC_DIR/$filename"
 
-    # Prepare Wrapped Content
-    # Use printf to avoid expanding variables in content, but %s is safe.
+    echo "📦 Processing $filename..."
+    
+    # Create wrapped content block
     local wrapped_content
     wrapped_content=$(printf "\n%s\n%s\n%s\n" "$start_marker" "$content" "$end_marker")
+    
+    local temp_file="${target_path}.tmp"
+    TEMP_FILES+=("$temp_file")
 
-    if [ -f "$file" ]; then
-        if grep -Fq "$start_marker" "$file"; then
-            echo "   🔄 Updating existing CLDD block in $file"
-            
-            # Use awk with index() for safer substring matching
-            # Filter out old block
+    if [ -f "$target_path" ]; then
+        if grep -Fq "$start_marker" "$target_path"; then
+            echo "   🔄 Updating existing CLDD block in $target_path"
+            # Filter out old block using awk
+            # atomic write to temp file
             awk -v start="$start_marker" -v end="$end_marker" '
-                # If line contains start marker, enable skip mode
-                # But careful if start marker is strictly equal or just contained
                 index($0, start) { skip = 1; next }
                 index($0, end) { skip = 0; next }
                 !skip { print }
-            ' "$file" > "${file}.tmp"
+            ' "$target_path" > "$temp_file"
             
-            # Append new content
-            echo "$wrapped_content" >> "${file}.tmp"
-            mv "${file}.tmp" "$file"
+            # Append new block
+            echo "$wrapped_content" >> "$temp_file"
         else
-            echo "   ➕ Appending CLDD block to $file"
-            echo "$wrapped_content" >> "$file"
+            echo "   ➕ Appending CLDD block to $target_path"
+            cp "$target_path" "$temp_file"
+            echo "$wrapped_content" >> "$temp_file"
         fi
     else
-        echo "   ✨ Creating $file"
-        echo "$wrapped_content" > "$file"
+        echo "   ✨ Creating $target_path"
+        echo "$wrapped_content" > "$temp_file"
     fi
+
+    # Atomic Move
+    mv "$temp_file" "$target_path"
 }
+
+# --- Main ---
 
 # Parse Args
 LOCAL_INSTALL="false"
-for arg in "$@"; do
-    if [ "$arg" == "--local" ]; then
-        LOCAL_INSTALL="true"
-    fi
+PUBLIC_DIR="$DEFAULT_PUBLIC_DIR"
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --local) LOCAL_INSTALL="true" ;;
+        --dir) PUBLIC_DIR="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
 done
 
-# --- CSS ---
-# For local install, we need to be careful not to read the target file we are about to overwrite.
-# But for testing, it is circular.
-# Let's assume for local testing we change the target to "public/custom_test.css"?
-# No, user wants valid install.
-# Let's fix the call sites to pass correct path.
+echo "🚀 Installing Chainlit Docked Docs (CLDD)..."
+echo "   📂 Target Directory: $PUBLIC_DIR"
 
-echo "📦 Processing custom.css..."
-if [ "$LOCAL_INSTALL" == "true" ]; then
-    CSS_CONTENT=$(cat "public/custom.css")
-else
-    CSS_CONTENT=$(download_content "$REPO_URL/custom.css")
+# Ensure public dir exists calls are atomic enough (mkdir -p)
+if ! mkdir -p "$PUBLIC_DIR"; then
+    echo "❌ Error: Could not create directory $PUBLIC_DIR" >&2
+    exit 1
 fi
-update_file "$CSS_FILE" "$CSS_CONTENT" "$CSS_START" "$CSS_END"
 
-# --- JS ---
-echo "📦 Processing custom.js..."
-if [ "$LOCAL_INSTALL" == "true" ]; then
-    JS_CONTENT=$(cat "public/custom.js")
-else
-    JS_CONTENT=$(download_content "$REPO_URL/custom.js")
-fi
-update_file "$JS_FILE" "$JS_CONTENT" "$JS_START" "$JS_END"
+# Fetch and Install CSS
+CSS_CONTENT=$(fetch_content "custom.css")
+install_asset "custom.css" "$CSS_CONTENT" "$CSS_START" "$CSS_END"
+
+# Fetch and Install JS
+JS_CONTENT=$(fetch_content "custom.js")
+install_asset "custom.js" "$JS_CONTENT" "$JS_START" "$JS_END"
 
 echo ""
 echo "🎉 Installation Complete!"
 echo "👉 Ensure your .chainlit/config.toml includes:"
-echo '   custom_css = "/public/custom.css"'
-echo '   custom_js = "/public/custom.js"'
+echo "   custom_css = \"/$PUBLIC_DIR/custom.css\""
+echo "   custom_js = \"/$PUBLIC_DIR/custom.js\""

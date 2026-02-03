@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2026-02-02
+
+### Changed
+-   **Installer**: Refactored `install.sh` for robustness, security, and cleanliness (atomic writes, traps).
+
 ## [1.3.1] - 2026-02-02
 
 ### Added

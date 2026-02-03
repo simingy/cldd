@@ -1,6 +1,6 @@
 # Chainlit Docked Docs (CLDD)
 
-![Version](https://img.shields.io/badge/version-1.3.1-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Chainlit](https://img.shields.io/badge/Chainlit-Compatible-F70069)
+![Version](https://img.shields.io/badge/version-1.3.2-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Chainlit](https://img.shields.io/badge/Chainlit-Compatible-F70069)
 ![Tested](https://img.shields.io/badge/Tested%20on-Chainlit%202.9.6-success)
 
 
