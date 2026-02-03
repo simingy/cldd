@@ -1,6 +1,6 @@
 /**
  * Chainlit Docked Docs (CLDD)
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Siming Yuan
  * License: MIT
  */
@@ -9,7 +9,10 @@
 :root {
     /* --cldd-hover-height removed (controlled by JS now) */
     --cldd-max-height: 95vh;
+    --cldd-open-delay: 0s;
+    /* Configurable via JS */
     --cldd-close-delay: 0.25s;
+    /* Configurable via JS */
     --cldd-bg: #f5f5f5;
     --cldd-bg-dark: #0f172a;
     --cldd-active-bg: var(--cldd-bg);
@@ -25,7 +28,7 @@
 }
 
 /* Modal Backdrop */
-#cldd-backdrop {
+.cldd-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -40,14 +43,14 @@
     transition: opacity 0.3s ease;
 }
 
-#cldd-backdrop.visible,
-#cldd-drawer:hover~#cldd-backdrop {
+.cldd-backdrop.visible,
+.cldd-drawer:hover~.cldd-backdrop {
     opacity: 1;
     pointer-events: auto;
 }
 
 /* --- DRAWER --- */
-#cldd-drawer {
+.cldd-drawer {
     position: fixed;
     z-index: 9999;
 
@@ -56,6 +59,9 @@
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     will-change: height, width, border-radius, transform;
+
+    /* robust box-sizing */
+    box-sizing: border-box;
 
     /* Base Appearance */
     background-color: var(--cldd-tab-color);
@@ -71,8 +77,12 @@
     transition-delay: var(--cldd-close-delay);
 }
 
+.cldd-drawer * {
+    box-sizing: border-box;
+}
+
 /* Dark mode adjustment */
-.dark #cldd-drawer {
+.dark .cldd-drawer {
     border-color: var(--cldd-border-color-dark);
 }
 
@@ -83,7 +93,7 @@
 */
 
 /* BOTTOM (Center) */
-#cldd-drawer[data-dock="bottom"] {
+.cldd-drawer[data-dock="bottom"] {
     bottom: 0;
     left: 0;
     right: 0;
@@ -97,7 +107,7 @@
 }
 
 /* BOTTOM LEFT */
-#cldd-drawer[data-dock="bottom-left"] {
+.cldd-drawer[data-dock="bottom-left"] {
     bottom: 0;
     left: 80px;
     right: auto;
@@ -111,7 +121,7 @@
 }
 
 /* BOTTOM RIGHT */
-#cldd-drawer[data-dock="bottom-right"] {
+.cldd-drawer[data-dock="bottom-right"] {
     bottom: 0;
     right: 80px;
     left: auto;
@@ -125,7 +135,7 @@
 }
 
 /* TOP (Center) */
-#cldd-drawer[data-dock="top"] {
+.cldd-drawer[data-dock="top"] {
     top: 0;
     left: 0;
     right: 0;
@@ -139,7 +149,7 @@
 }
 
 /* LEFT */
-#cldd-drawer[data-dock="left"] {
+.cldd-drawer[data-dock="left"] {
     left: 0;
     top: 0;
     bottom: 0;
@@ -153,7 +163,7 @@
 }
 
 /* RIGHT */
-#cldd-drawer[data-dock="right"] {
+.cldd-drawer[data-dock="right"] {
     right: 0;
     top: 0;
     bottom: 0;
@@ -168,27 +178,32 @@
 
 
 /* --- EXPANDED (HOVER) STATES --- */
-#cldd-drawer[data-dock="bottom"]:hover,
-#cldd-drawer[data-dock="bottom-left"]:hover,
-#cldd-drawer[data-dock="bottom-right"]:hover {
+.cldd-drawer[data-dock="bottom"]:not(.maximized):hover,
+.cldd-drawer[data-dock="bottom"]:not(.maximized):focus-within,
+.cldd-drawer[data-dock="bottom-left"]:not(.maximized):hover,
+.cldd-drawer[data-dock="bottom-left"]:not(.maximized):focus-within,
+.cldd-drawer[data-dock="bottom-right"]:not(.maximized):hover,
+.cldd-drawer[data-dock="bottom-right"]:not(.maximized):focus-within {
     width: var(--cldd-expand-width);
     height: var(--cldd-expand-height);
     background-color: var(--cldd-active-bg);
     border-radius: 8px 8px 0 0;
     box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
-    transition-delay: 0s;
+    transition-delay: var(--cldd-open-delay);
 }
 
-#cldd-drawer[data-dock="top"]:hover {
+.cldd-drawer[data-dock="top"]:not(.maximized):hover,
+.cldd-drawer[data-dock="top"]:not(.maximized):focus-within {
     width: var(--cldd-expand-width);
     height: var(--cldd-expand-height);
     background-color: var(--cldd-active-bg);
     border-radius: 0 0 8px 8px;
     box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14);
-    transition-delay: 0s;
+    transition-delay: var(--cldd-open-delay);
 }
 
-#cldd-drawer[data-dock="left"]:hover {
+.cldd-drawer[data-dock="left"]:not(.maximized):hover,
+.cldd-drawer[data-dock="left"]:not(.maximized):focus-within {
     width: var(--cldd-expand-width);
     height: 80vh;
     /* Keep height somewhat fixed or use another variable? User likely means width for Left dock. Let's stick to expand-width for main dimension? No, Left dock expands Width. Bottom uses Height. */
@@ -199,37 +214,38 @@
     background-color: var(--cldd-active-bg);
     border-radius: 0 8px 8px 0;
     box-shadow: 8px 0 10px 1px rgba(0, 0, 0, 0.14);
-    transition-delay: 0s;
+    transition-delay: var(--cldd-open-delay);
 }
 
-#cldd-drawer[data-dock="right"]:hover {
+.cldd-drawer[data-dock="right"]:not(.maximized):hover,
+.cldd-drawer[data-dock="right"]:not(.maximized):focus-within {
     width: var(--cldd-expand-width);
     height: var(--cldd-expand-height);
     background-color: var(--cldd-active-bg);
     border-radius: 8px 0 0 8px;
     box-shadow: -8px 0 10px 1px rgba(0, 0, 0, 0.14);
-    transition-delay: 0s;
+    transition-delay: var(--cldd-open-delay);
 }
 
 /* --- MAXIMIZED STATES --- */
-#cldd-drawer.maximized {
-    width: 98vw !important;
-    height: 98vh !important;
-    max-width: none !important;
-    max-height: none !important;
-    margin: auto !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    border-radius: 8px !important;
+.cldd-drawer.maximized {
+    width: 98vw;
+    height: 98vh;
+    max-width: none;
+    max-height: none;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 8px;
     transition-delay: 0s;
-    flex-direction: column !important;
+    flex-direction: column;
 }
 
 
 /* --- CONTENT --- */
-#cldd-frame {
+.cldd-frame {
     flex-grow: 1;
     border: none;
     width: 100%;
@@ -241,8 +257,9 @@
     pointer-events: none;
 }
 
-#cldd-drawer:hover #cldd-frame,
-#cldd-drawer.maximized #cldd-frame {
+.cldd-drawer:hover .cldd-frame,
+.cldd-drawer:focus-within .cldd-frame,
+.cldd-drawer.maximized .cldd-frame {
     background: transparent;
     opacity: 1;
     pointer-events: auto;
@@ -251,7 +268,7 @@
 
 
 /* --- HEADER --- */
-#cldd-header {
+.cldd-header {
     background-color: var(--cldd-tab-color);
     display: flex;
     align-items: center;
@@ -265,23 +282,23 @@
 }
 
 /* Header Dimensions */
-#cldd-drawer[data-dock="bottom"] #cldd-header,
-#cldd-drawer[data-dock="bottom-left"] #cldd-header,
-#cldd-drawer[data-dock="bottom-right"] #cldd-header,
-#cldd-drawer[data-dock="top"] #cldd-header,
-#cldd-drawer.maximized #cldd-header {
+.cldd-drawer[data-dock="bottom"] .cldd-header,
+.cldd-drawer[data-dock="bottom-left"] .cldd-header,
+.cldd-drawer[data-dock="bottom-right"] .cldd-header,
+.cldd-drawer[data-dock="top"] .cldd-header,
+.cldd-drawer.maximized .cldd-header {
     width: 100%;
     height: 32px;
 }
 
-#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-header,
-#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-header {
+.cldd-drawer[data-dock="left"]:not(.maximized) .cldd-header,
+.cldd-drawer[data-dock="right"]:not(.maximized) .cldd-header {
     width: 32px;
     height: 100%;
 }
 
 /* Label Positioning */
-#cldd-label {
+.cldd-label {
     color: rgba(255, 255, 255, 0.9);
     font-size: 11px;
     font-weight: 600;
@@ -294,17 +311,17 @@
 }
 
 /* Horizontal Docks: Ensure minimum width for the label */
-#cldd-drawer[data-dock="bottom"] #cldd-label,
-#cldd-drawer[data-dock="bottom-left"] #cldd-label,
-#cldd-drawer[data-dock="bottom-right"] #cldd-label,
-#cldd-drawer[data-dock="top"] #cldd-label,
-#cldd-drawer.maximized #cldd-label {
+.cldd-drawer[data-dock="bottom"] .cldd-label,
+.cldd-drawer[data-dock="bottom-left"] .cldd-label,
+.cldd-drawer[data-dock="bottom-right"] .cldd-label,
+.cldd-drawer[data-dock="top"] .cldd-label,
+.cldd-drawer.maximized .cldd-label {
     min-width: 80px;
 }
 
 /* Vertical Text Rotation */
-#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-label,
-#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-label {
+.cldd-drawer[data-dock="left"]:not(.maximized) .cldd-label,
+.cldd-drawer[data-dock="right"]:not(.maximized) .cldd-label {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     transform: rotate(180deg);
@@ -314,7 +331,7 @@
 }
 
 /* --- BUTTONS --- */
-#cldd-controls {
+.cldd-controls {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -326,11 +343,11 @@
 }
 
 /* Horizontal Layout */
-#cldd-drawer[data-dock="bottom"] #cldd-controls,
-#cldd-drawer[data-dock="bottom-left"] #cldd-controls,
-#cldd-drawer[data-dock="bottom-right"] #cldd-controls,
-#cldd-drawer[data-dock="top"] #cldd-controls,
-#cldd-drawer.maximized #cldd-controls {
+.cldd-drawer[data-dock="bottom"] .cldd-controls,
+.cldd-drawer[data-dock="bottom-left"] .cldd-controls,
+.cldd-drawer[data-dock="bottom-right"] .cldd-controls,
+.cldd-drawer[data-dock="top"] .cldd-controls,
+.cldd-drawer.maximized .cldd-controls {
     right: 8px;
     left: auto;
     top: 50%;
@@ -340,8 +357,8 @@
 }
 
 /* Vertical Layout */
-#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-controls,
-#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-controls {
+.cldd-drawer[data-dock="left"]:not(.maximized) .cldd-controls,
+.cldd-drawer[data-dock="right"]:not(.maximized) .cldd-controls {
     top: 8px;
     left: 50%;
     transform: translateX(-50%);
@@ -349,33 +366,39 @@
 }
 
 /* Reorder Buttons */
-#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-btn-maximize,
-#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-btn-maximize {
+.cldd-drawer[data-dock="left"]:not(.maximized) .cldd-btn-maximize,
+.cldd-drawer[data-dock="right"]:not(.maximized) .cldd-btn-maximize {
     order: -1;
 }
 
-#cldd-drawer[data-dock="left"]:not(.maximized) #cldd-btn-close,
-#cldd-drawer[data-dock="right"]:not(.maximized) #cldd-btn-close {
+.cldd-drawer[data-dock="left"]:not(.maximized) .cldd-btn-close,
+.cldd-drawer[data-dock="right"]:not(.maximized) .cldd-btn-close {
     order: -2;
 }
 
 /* Maximized Control Logic */
-#cldd-drawer.maximized #cldd-btn-maximize {
+.cldd-drawer.maximized .cldd-btn-maximize {
     display: none;
 }
 
-#cldd-btn-close {
+.cldd-btn-close {
     display: none;
 }
 
-#cldd-drawer.maximized #cldd-btn-close {
+.cldd-drawer.maximized .cldd-btn-close {
     display: flex;
     order: 0;
 }
 
+/* Force hiding close button when not maximized, even if controls are visible */
+.cldd-drawer:not(.maximized) .cldd-btn-close {
+    display: none !important;
+}
 
-#cldd-drawer:hover #cldd-controls,
-#cldd-drawer.maximized #cldd-controls {
+
+.cldd-drawer:hover .cldd-controls,
+.cldd-drawer:focus-within .cldd-controls,
+.cldd-drawer.maximized .cldd-controls {
     opacity: 1;
     pointer-events: auto;
 }
@@ -399,12 +422,12 @@
     color: white;
 }
 
-#cldd-btn-maximize::after {
+.cldd-btn-maximize::after {
     content: '⤢';
     font-size: 14px;
 }
 
-#cldd-btn-close::after {
+.cldd-btn-close::after {
     content: '✕';
     font-size: 11px;
 }

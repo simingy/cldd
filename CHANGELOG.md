@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-02-02
+
+### Added
+-   **Config**: Global configuration via `window.CLDD_CONFIG`.
+-   **Config**: Configurable `openDelay` and `closeDelay` for hover transitions.
+-   **Accessibility**: Added ARIA attributes, roles, and keyboard support (Enter/Space to toggle).
+-   **Accessibility**: Added `:focus-within` support for expanding drawer via keyboard.
+
+### Changed
+-   **Refactor**: Migrated from ID selectors to Class selectors.
+-   **Refactor**: Added `box-sizing: border-box` isolation to prevent layout issues.
+-   **Performance**: Switched to `DOMContentLoaded` for robust and faster initialization.
+-   **Docs**: Updated Configuration section in README.
+
+### Fixed
+-   Fixed "wiggle" glitch where hover state conflicted with maximized state.
+-   Fixed Close button appearing when not maximized.
+
 ## [1.2.0] - 2026-01-31
 
 ### Added

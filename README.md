@@ -1,6 +1,6 @@
 # Chainlit Docked Docs (CLDD)
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Chainlit](https://img.shields.io/badge/Chainlit-Compatible-F70069)
+![Version](https://img.shields.io/badge/version-1.3.0-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Chainlit](https://img.shields.io/badge/Chainlit-Compatible-F70069)
 ![Tested](https://img.shields.io/badge/Tested%20on-Chainlit%202.9.6-success)
 
 
@@ -35,25 +35,31 @@ curl -fsSL https://raw.githubusercontent.com/simingy/cldd/main/install.sh | bash
     ```
 
 ## Configuration
+    
+### Global Configuration (Recommended)
 
-Open `public/custom.js` to change the settings at the top of the file:
+You can configure options by setting `window.CLDD_CONFIG` **before** the script loads (or in a separate script).
 
 ```javascript
-const CONFIG = {
-    // Dock Position: 'bottom', 'bottom-left', 'bottom-right', 'top', 'left', 'right'
-    dockPosition: 'bottom', 
-    
-    // URL to embed (can be local '/docs/' or external)
-    docsUrl: 'https://squidfunk.github.io/mkdocs-material/getting-started/',
-    
-    // Dimensions when expanded
-    expandedWidth: '80vw', 
-    expandedHeight: '70vh',
-    
-    // Label Text
-    buttonLabel: 'DOCUMENTATION'
+window.CLDD_CONFIG = {
+    dockPosition: 'bottom',
+    expandedWidth: '80vw',
+    openDelay: '0.5s',  // Wait before expanding
+    closeDelay: '0.2s'  // Wait before collapsing
 };
 ```
+
+### Options
+
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `dockPosition` | string | `'bottom'` | 'bottom', 'top', 'left', 'right', 'bottom-left', 'bottom-right' |
+| `docsUrl` | string | *(Built-in)* | URL or path to embed. |
+| `expandedWidth` | string | `'80vw'` | Width when expanded (CSS units). |
+| `expandedHeight` | string | `'70vh'` | Height when expanded (CSS units). |
+| `openDelay` | string | `'0s'` | Delay before expanding on hover. |
+| `closeDelay` | string | `'0.2s'` | Delay before collapsing on mouse leave. |
+| `buttonLabel` | string | `'DOCUMENTATION'` | Text label on the tab. |
 
 ## Usage
 
