@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2026-02-02
+
+### Added
+-   **Installer**: New `install.sh` script for smart, safe installation and updates.
+-   **Docs**: Updated installation instructions to use `curl | bash` method.
+
 ## [1.3.0] - 2026-02-02
 
 ### Added

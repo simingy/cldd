@@ -1,6 +1,6 @@
 # Chainlit Docked Docs (CLDD)
 
-![Version](https://img.shields.io/badge/version-1.3.0-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Chainlit](https://img.shields.io/badge/Chainlit-Compatible-F70069)
+![Version](https://img.shields.io/badge/version-1.3.1-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Chainlit](https://img.shields.io/badge/Chainlit-Compatible-F70069)
 ![Tested](https://img.shields.io/badge/Tested%20on-Chainlit%202.9.6-success)
 
 
@@ -24,6 +24,10 @@ Run this command in the root of your Chainlit project:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/simingy/cldd/main/install.sh | bash
 ```
+
+This script will:
+1.  Download `custom.css` and `custom.js` to your `public/` directory.
+2.  **Smart Update**: If you already have these files, it will append (or update) the CLDD code in a safe block, preserving your existing code.
 
 ### Manual
 1.  **Add Files**: Copy `public/custom.css` and `public/custom.js` to your project's `public/` folder.
